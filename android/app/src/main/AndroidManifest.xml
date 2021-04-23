@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mreka.flutter_app">
+    package="com.mreka.smakuwa">
    <application
-        android:label="flutter_app"
+        android:label="smakuwa"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

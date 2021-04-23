@@ -1,4 +1,4 @@
-package com.mreka.flutter_app
+package com.mreka.smakuwa
 
 import io.flutter.embedding.android.FlutterActivity
 

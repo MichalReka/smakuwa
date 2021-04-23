@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1006998054548",
+    "project_id": "smakuwa-27fc2",
+    "storage_bucket": "smakuwa-27fc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006998054548:android:0e429c506be10e834c3681",
+        "android_client_info": {
+          "package_name": "com.mreka.smakuwa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006998054548-lfpotgv102jakbjiho7ne145ol2u4d7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEXbtf4qcYUx3nnpiE_SgMM9EfZpILh9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006998054548-lfpotgv102jakbjiho7ne145ol2u4d7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
