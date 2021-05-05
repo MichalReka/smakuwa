@@ -1,13 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:smakuwa/models/firebase_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:smakuwa/models/item_add_model.dart';
+import 'package:smakuwa/models/login_model.dart';
 import 'package:smakuwa/screens/account.dart';
-import 'file:///C:/Users/Michal/Documents/magister/smakuwa/lib/screens/item_details.dart';
 import 'package:smakuwa/screens/item_list.dart';
 import 'package:smakuwa/screens/messages.dart';
 
-void main() {
+import 'custom_icons/custom-icons.dart';
 
-  runApp(MyApp());
+void main() {
+  runApp(
+    MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => LoginModel()),
+      ChangeNotifierProvider(create: (context) => ItemAddModel()),
+    ],
+    child: MyApp(),
+  ),);
 }
 class MyApp extends StatefulWidget {
   @override
@@ -17,17 +28,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
-    ItemList(),MessagesScreen(),Account()
+    ItemList(),ItemList(),MessagesScreen(),AccountScreen()
   ];
-
+  void initializeFirebase() async
+  {
+    await Firebase.initializeApp();
+  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }  @override
   Widget build(BuildContext context) {
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
-    firebaseHandler.initializeFlutterFire();
+    LoginModel firebaseHandler = new LoginModel();
+    firebaseHandler.checkIfLoggedIn();
+    initializeFirebase();
     return MaterialApp(
       title: 'Smakuwa',
       theme: ThemeData(
@@ -40,7 +55,7 @@ class _MyAppState extends State<MyApp> {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-          primarySwatch: Colors.lightGreen,
+          primarySwatch: Colors.green,
           textTheme: TextTheme(
             headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
             headline6: TextStyle(fontSize: 19.0),
@@ -50,9 +65,25 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         body: _widgetOptions[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+/*          selectedIconTheme: IconThemeData(
+            color: Colors.green[400]
+          ),
+          unselectedIconTheme: IconThemeData(
+              color: Colors.black38
+          ),*/
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.green[500],
+          unselectedItemColor: Colors.black26,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          showUnselectedLabels: true,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.list),
+              icon: Icon(Icons.restaurant),
+              label: 'Potrawy',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CustomIcons.carrot),
               label: 'Produkty',
             ),
             BottomNavigationBarItem(
@@ -65,9 +96,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
           onTap: _onItemTapped,
-
         ),
       ),
     );

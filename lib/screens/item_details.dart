@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FoodDetails extends StatelessWidget {
-  final image;
+  final document;
   final tag;
-  FoodDetails(this.tag,this.image);
+  FoodDetails(this.tag,this.document);
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-        child: Column(
+        child: ListView(
           children: [Hero(
             tag: tag,
             child: Material(
@@ -19,14 +19,18 @@ class FoodDetails extends StatelessWidget {
                       context
                     );
                   },
-                  child: Image.asset(
-                      image,
+                  child: Image.network(
+                      document["image_url"],
                       height: MediaQuery.of(context).size.height*0.35,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover)),
             ),
           ),
-            Text("dihauwjh iwajdiwaj idja widjiwa jidj waidj waidj wiajd iwajd iwajd iwaj id")
+            Text(document["name"],style: Theme.of(context).textTheme.headline4,),
+            Text(document["description"],style: Theme.of(context).textTheme.bodyText1,),
+            Text(DateTime.parse(document["date"].toDate().toString()).toString()
+              ,style: Theme.of(context).textTheme.bodyText1,),
+            Text(document["uid"],style: Theme.of(context).textTheme.bodyText1,),
           ]
         )
     );
