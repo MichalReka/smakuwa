@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,18 +10,33 @@ import 'package:image_picker/image_picker.dart';
 class ItemAddModel with ChangeNotifier {
   File image;
   final picker = ImagePicker();
+  final formKey = GlobalKey<FormState>();
+
   DateTime selectedDate = DateTime.now();
-  CollectionReference items = FirebaseFirestore.instance.collection('dishes');
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  String selectedItem = "dishes";
+  CollectionReference items = FirebaseFirestore.instance.collection('dishes');
+  Map<dynamic,dynamic> dropdownItems = {"dishes":"Potrawy","products":"Produkty"};
+  bool itemAdded = false;
+  bool _imageSelected = false;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = File(pickedFile.path);
+      notifyListeners();
+      _imageSelected = true;
     } else {
       print('No image selected.');
     }
+
+  }
+
+  setSelectedItem(String value)
+  {
+    selectedItem=value;
+    items = FirebaseFirestore.instance.collection(value);
     notifyListeners();
   }
 
@@ -40,7 +54,7 @@ class ItemAddModel with ChangeNotifier {
     return null;
   }
 
-  Future<Uint8List> testCompressAndGetFile(File file) async {
+  Future<Uint8List> compressAndGetFile(File file) async {
     var result = await FlutterImageCompress.compressWithFile(
       file.absolute.path,
       quality: 50,
@@ -48,13 +62,17 @@ class ItemAddModel with ChangeNotifier {
     return result;
   }
 
-  void addItem() async {
+  Future<bool> addItem() async {
+    var added=false;
     try {
       await items.add({
         'name': nameController.text,
         'description': descriptionController.text,
-        'date': selectedDate,
-        'uid': FirebaseAuth.instance.currentUser.uid
+        'added_date': DateTime.now(),
+        'expiration_date': selectedDate,
+        'uid': FirebaseAuth.instance.currentUser.uid,
+        'location':'Miasto',
+        'vege':true,
       }).then((value) async {
         try {
           var ref = FirebaseStorage.instance.ref('dishes/' +
@@ -63,20 +81,31 @@ class ItemAddModel with ChangeNotifier {
               value.id +
               "/" +
               "1");
-          await ref.putData(await testCompressAndGetFile(image));
-          var downloadUrlRef = await ref.getDownloadURL();
-          await value
-              .set({"image_url": downloadUrlRef}, SetOptions(merge: true));
-          await File(image.path).delete();
+          if(_imageSelected)
+            {
+              await ref.putData(await compressAndGetFile(image));
+              var downloadUrlRef = await ref.getDownloadURL();
+              await value
+                  .set({"image_url": downloadUrlRef}, SetOptions(merge: true));
+            }
+          else
+            {
+              await value
+                  .set({"image_url": ""}, SetOptions(merge: true));
+            }
+          added = true;
+          _imageSelected = false;
+          image = null;
+          nameController.text="";
+          descriptionController.text="";
         } on FirebaseException {
           print("Upload problem");
         }
       });
     } catch (e) {
       print(e);
-      return;
     }
+    return added;
   }
 
-  void uploadPhoto() {}
 }

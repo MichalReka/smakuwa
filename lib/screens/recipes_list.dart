@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,13 +10,9 @@ import 'package:provider/provider.dart';
 import 'package:smakuwa/screens/login_screen.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'item_details.dart';
-const double _fabDimension = 56.0;
 
 //TODO: OPTYMALIZACJA READ/WRITE POPRZEZ LIMIT WYSWIETLANYCH DOKUMENTOW - SUBSET NIE CALOSC (NIE 1-5 tylko 1-3, 3-5) - czyli kazdy dokument to klasa
-class ItemList extends StatelessWidget {
-  final showOwnedOnly;
-  ItemList({this.showOwnedOnly=false});
-
+class RecipesList extends StatelessWidget {
   Widget _displayImage(String uri) {
     print(uri);
     if (uri.isEmpty) {
@@ -41,13 +36,16 @@ class ItemList extends StatelessWidget {
   Widget _displayItemList(BuildContext context, String itemsGroup) {
     return Consumer<ItemListModel>(builder: (context, model, child) {
       return StreamBuilder(
-          stream: model.itemListStream(showOwnedOnly, itemsGroup),
+          stream: FirebaseFirestore.instance
+              .collection(itemsGroup)
+              .limit(model.limits[itemsGroup])
+              .snapshots(),
           builder: (context, snapshot) {
             return Container(
               child: ListView.builder(
                   controller: model.scrollControllers[itemsGroup],
                   itemCount:
-                      snapshot.data == null ? 0 : snapshot.data.docs.length,
+                  snapshot.data == null ? 0 : snapshot.data.docs.length,
                   itemBuilder: (context, index) {
                     model.setListener(itemsGroup);
                     DocumentSnapshot currentDoc = snapshot.data.docs[index];
@@ -97,58 +95,24 @@ class ItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text("Ryneczek"),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: "Potrawy", icon: Icon(Icons.local_restaurant)),
-                Tab(text: "Produkty", icon: Icon(CustomIcons.carrot)),
-              ],
-            )),
-        body: TabBarView(children: [
-          _displayItemList(context, "dishes"),
-          _displayItemList(context, "products"),
-        ]),
-        floatingActionButton: /*FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ItemAdd()),
-            );
-          },
-          tooltip: 'Dodaj potrawę',
-          child: Icon(Icons.add),
-        ),*/ // This trailing comma makes auto-formatting nicer for build methods.
-        OpenContainer(
-          openBuilder: (BuildContext context, VoidCallback _) {
-            return ItemAdd();
-          },
-          closedElevation: 6.0,
-          closedShape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(_fabDimension / 2),
-            ),
-          ),
-          closedColor: Theme.of(context).colorScheme.secondary,
-          closedBuilder: (BuildContext context, VoidCallback openContainer) {
-            return SizedBox(
-              height: _fabDimension,
-              width: _fabDimension,
-              child: Center(
-                child: Icon(
-                  Icons.add,
-                  color: Theme.of(context).colorScheme.onSecondary,
-                ),
-              ),
-            );
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+          title: Text("Przepisy"),
+
       ),
+      body: _displayItemList(context, "dishes"),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ItemAdd()),
+          );
+        },
+        tooltip: 'Dodaj potrawę',
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

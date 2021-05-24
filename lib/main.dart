@@ -2,47 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smakuwa/models/profile_model.dart';
 import 'package:smakuwa/models/item_add_model.dart';
+import 'package:smakuwa/models/item_list_model.dart';
 import 'package:smakuwa/models/login_model.dart';
 import 'package:smakuwa/screens/account.dart';
+import 'package:smakuwa/screens/home.dart';
 import 'package:smakuwa/screens/item_list.dart';
 import 'package:smakuwa/screens/messages.dart';
+import 'package:smakuwa/screens/recipes_list.dart';
 
 import 'custom_icons/custom-icons.dart';
+import 'models/home_model.dart';
 
-void main() {
+void main(){
   runApp(
     MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => LoginModel()),
       ChangeNotifierProvider(create: (context) => ItemAddModel()),
+      ChangeNotifierProvider(create: (context) => ProfileModel()),
+      ChangeNotifierProvider(create: (context) => HomeModel()),
+      ChangeNotifierProvider(create: (context) => ItemListModel()),
     ],
-    child: MyApp(),
+    child: Smakuwa(),
   ),);
 }
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
+class Smakuwa extends StatelessWidget {
 
-class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-  List<Widget> _widgetOptions = <Widget>[
-    ItemList(),ItemList(),MessagesScreen(),AccountScreen()
-  ];
-  void initializeFirebase() async
-  {
-    await Firebase.initializeApp();
-  }
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }  @override
+  @override
   Widget build(BuildContext context) {
-    LoginModel firebaseHandler = new LoginModel();
-    firebaseHandler.checkIfLoggedIn();
-    initializeFirebase();
     return MaterialApp(
       title: 'Smakuwa',
       theme: ThemeData(
@@ -61,44 +50,7 @@ class _MyAppState extends State<MyApp> {
             headline6: TextStyle(fontSize: 19.0),
             bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
           )),
-
-      home: Scaffold(
-        body: _widgetOptions[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-/*          selectedIconTheme: IconThemeData(
-            color: Colors.green[400]
-          ),
-          unselectedIconTheme: IconThemeData(
-              color: Colors.black38
-          ),*/
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.green[500],
-          unselectedItemColor: Colors.black26,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          showUnselectedLabels: true,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant),
-              label: 'Potrawy',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CustomIcons.carrot),
-              label: 'Produkty',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: 'Wiadomości',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Konto',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
-      ),
+      home: Home()
     );
   }
 }

@@ -7,7 +7,7 @@ class LoginModel with ChangeNotifier{
   bool launchError = false;
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  Future checkIfLoggedIn() async {
+  void checkIfLoggedIn(){
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
       User currentUser = FirebaseAuth.instance.currentUser;
@@ -19,7 +19,7 @@ class LoginModel with ChangeNotifier{
     } catch (e) {
       launchError = true;
     }
-    notifyListeners();
+    //notifyListeners();
   }
   Future signIn() async{
     try {
