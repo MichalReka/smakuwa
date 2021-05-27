@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smakuwa/models/profile_model.dart';
 import 'package:smakuwa/models/login_model.dart';
@@ -7,48 +8,42 @@ import 'login_screen.dart';
 class ProfileEdit extends StatelessWidget {
 
   Widget _profilePhoto(BuildContext context,ProfileModel model) {
-//    if(model.editImage==false)
-//      {
-//        return Center(
-//          child: Material(
-//            child: Ink(
-//              width: 250,
-//              height: 250,
-//              decoration: BoxDecoration(
-//                shape: BoxShape.circle,
-//                image: DecorationImage(
-//                    image: AssetImage('assets/img/placeholder.png'),
-//                    fit: BoxFit.fill),
-//              ),
-//              child: InkWell(
-//                  borderRadius: BorderRadius.circular(180),
-//                  onTap: model.switchImageModes()
-//              ),
-//            ),
-//          ),
-//        );
-//      }
-//    else
-//      {
-//        return Center(
-//          child: Material(
-//            child: Ink(
-//              width: 250,
-//              height: 250,
-//              decoration: BoxDecoration(
-//                shape: BoxShape.circle,
-//                color: Theme.of(context).appBarTheme.backgroundColor
-//              ),
-//              child: InkWell(
-//                  borderRadius: BorderRadius.circular(180),
-//                  onTap: model.switchImageModes()
-//              ),
-//            ),
-//          ),
-//        );
-//      }
 
-  }
+        return Center(
+          child: Material(
+            child: Ink(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: model.image!=null ? FileImage(model.image):AssetImage('assets/img/placeholder.png'),
+                    fit: BoxFit.cover),
+              ),
+              child: InkWell(
+                  borderRadius: BorderRadius.circular(180),
+                  onTap: ()=>model.getImage(),
+                child: Align(
+                alignment: Alignment.bottomRight,
+
+                child: Container(
+                  padding: EdgeInsets.all(17),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      borderRadius:BorderRadius.circular(100)
+                  ),
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ),
+            ),
+          ),
+        );
+      }
+
   @override
   Widget build(BuildContext context) {
     if (context.watch<LoginModel>().loggedIn) {
