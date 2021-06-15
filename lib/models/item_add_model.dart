@@ -21,6 +21,8 @@ class ItemAddModel with ChangeNotifier {
   bool itemAdded = false;
   bool _imageSelected = false;
 
+
+
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -57,7 +59,7 @@ class ItemAddModel with ChangeNotifier {
   Future<Uint8List> compressAndGetFile(File file) async {
     var result = await FlutterImageCompress.compressWithFile(
       file.absolute.path,
-      quality: 50,
+      quality: 35,
     );
     return result;
   }

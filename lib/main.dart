@@ -6,6 +6,7 @@ import 'package:smakuwa/models/profile_model.dart';
 import 'package:smakuwa/models/item_add_model.dart';
 import 'package:smakuwa/models/item_list_model.dart';
 import 'package:smakuwa/models/login_model.dart';
+import 'package:smakuwa/models/register_model.dart';
 import 'package:smakuwa/screens/account.dart';
 import 'package:smakuwa/screens/home.dart';
 import 'package:smakuwa/screens/item_list.dart';
@@ -24,6 +25,7 @@ void main(){
       ChangeNotifierProvider(create: (context) => ProfileModel()),
       ChangeNotifierProvider(create: (context) => HomeModel()),
       ChangeNotifierProvider(create: (context) => ItemListModel()),
+      ChangeNotifierProvider(create: (context) => RegisterModel()),
     ],
     child: Smakuwa(),
   ),);

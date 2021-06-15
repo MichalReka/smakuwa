@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:smakuwa/models/item_add_model.dart';
 import 'package:smakuwa/models/login_model.dart';
 import 'package:smakuwa/screens/login_screen.dart';
+import 'package:smakuwa/screens/process_screen.dart';
 
 class ItemAdd extends StatelessWidget {
   final _imageHeight = 0.25;
@@ -127,10 +128,14 @@ class ItemAdd extends StatelessWidget {
                         if (model.formKey.currentState.validate()) {
 /*                            ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Dodawanie...')));*/
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      AddingProcessScreen()));
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ProcessScreen(
+                                      futureOperation: model.addItem,
+                                      onEnd: "Dodawanie ukończone!",
+                                      onError:
+                                          "Dodawanie nie powiodło się, spróbuj ponownie później",
+                                      process: "Dodawanie...")));
 
 /*                            model.addItem();
                             model.formKey.currentState.reset();*/
@@ -149,76 +154,5 @@ class ItemAdd extends StatelessWidget {
       return LoginScreen();
     }
     // Build a Form widget using the _formKey created above.
-  }
-}
-
-class AddingProcessScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<ItemAddModel>(
-        builder: (context, model, child) {
-          return FutureBuilder(
-              future: model.addItem(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data == true) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Dodawanie ukończone!",
-                            style: Theme.of(context).textTheme.headline4,
-                          ),
-                          Icon(
-                            Icons.done_rounded,
-                            color: Colors.green,
-                            size: 70
-                          ),
-                          ElevatedButton(onPressed: (){
-                            Navigator.pop(context);
-                          }, child: Text("Wróć"))
-                        ],
-                      ),
-                    );
-                  } else {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Nie udało się dodać!",
-                              style: Theme.of(context).textTheme.headline4,
-                            ),
-                            Icon(
-                              Icons.close_rounded,
-                              color: Colors.red,
-                              size: 80,
-                            )
-                          ]),
-                    );
-                  }
-                } else {
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Dodawanie...",
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
-                        CircularProgressIndicator()
-                      ]);
-                }
-              });
-        },
-      ),
-    );
   }
 }

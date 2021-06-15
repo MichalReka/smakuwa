@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smakuwa/models/item_add_model.dart';
 import 'package:smakuwa/models/login_model.dart';
+import 'package:smakuwa/screens/register.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -26,7 +27,7 @@ class LoginScreen extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10),
                     child: TextField(
-                      controller: model.nameController,
+                      controller: model.emailController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Email',
@@ -68,7 +69,10 @@ class LoginScreen extends StatelessWidget {
                           'Zarejestruj się',
                         ),
                         onPressed: () {
-                          //signup screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegisterScreen()),
+                          );
                         },
                       )
                     ],

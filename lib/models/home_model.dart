@@ -11,7 +11,7 @@ class HomeModel with ChangeNotifier
   final Future<FirebaseApp> firebaseInit = Firebase.initializeApp();
   int currentIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
-    RecipesList(),ItemList(),MessagesScreen(),AccountScreen()
+    RecipesList(),ItemList(),ChatPage(),AccountScreen()
   ];
   void changeIndex(int index)
   {

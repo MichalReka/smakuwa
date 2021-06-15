@@ -5,8 +5,9 @@ import 'package:flutter/widgets.dart';
 class LoginModel with ChangeNotifier{
   bool loggedIn = false;
   bool launchError = false;
-  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   void checkIfLoggedIn(){
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
@@ -24,12 +25,12 @@ class LoginModel with ChangeNotifier{
   Future signIn() async{
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: nameController.text,
+          email: emailController.text,
           password: passwordController.text
       );
       loggedIn=true;
       notifyListeners();
-      nameController.text="";
+      emailController.text="";
       passwordController.text="";
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -39,6 +40,7 @@ class LoginModel with ChangeNotifier{
       }
     }
   }
+
   Future logout() async{
     try {
       FirebaseAuth.instance.signOut();
