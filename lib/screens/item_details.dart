@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smakuwa/models/login_model.dart';
+import 'package:smakuwa/screens/item_add.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import 'login_screen.dart';
 
 class FoodDetails extends StatelessWidget {
   final document;
@@ -53,7 +56,9 @@ class FoodDetails extends StatelessWidget {
           SizedBox(),
           ElevatedButton(
             child: Text("Edytuj"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => ItemAdd(editMode: true,editedItem: document,)));
+            },
           ),
           ElevatedButton(
             child: Text("Usuń"),
@@ -87,7 +92,16 @@ class FoodDetails extends StatelessWidget {
         ],
       );
     } else {
-      return Center(child: ElevatedButton(child: Text("Wyślij wiadomość"), onPressed: () {}));
+      return Center(child: ElevatedButton(child: Text("Wyślij wiadomość"), onPressed: () {
+        if(!Provider.of<LoginModel>(context, listen: false).loggedIn)
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginScreen()),
+            );
+          }
+      }));
     }
   }
 

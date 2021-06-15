@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'json_models.dart';
+
 class ItemAddModel with ChangeNotifier {
+
   File image;
   final picker = ImagePicker();
   final formKey = GlobalKey<FormState>();
@@ -15,13 +18,32 @@ class ItemAddModel with ChangeNotifier {
   DateTime selectedDate = DateTime.now();
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
   String selectedItem = "dishes";
   CollectionReference items = FirebaseFirestore.instance.collection('dishes');
   Map<dynamic,dynamic> dropdownItems = {"dishes":"Potrawy","products":"Produkty"};
+  City selectedCity;
   bool itemAdded = false;
   bool _imageSelected = false;
+  bool editMode = false;
+  List<City> citiesList;
+  DocumentReference editedDocument;
+  String _imageUrl;
+    loadData(DocumentSnapshot itemDetails){
+    nameController.text=itemDetails["name"];
+    descriptionController.text=itemDetails["description"];
+    selectedDate = DateTime.fromMillisecondsSinceEpoch(itemDetails['added_date'].millisecondsSinceEpoch);
+    selectedItem = itemDetails.reference.parent.id;
+    selectedCity = citiesList.singleWhere((City option) {
+      return itemDetails["location"]
+          .toString().contains(option.textSimple);
+    });
+    print(selectedCity.textSimple);
+    cityController.text = selectedCity.text;
+    _imageUrl = itemDetails['image_url'];
+    editedDocument=itemDetails.reference;
 
-
+  }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -32,7 +54,17 @@ class ItemAddModel with ChangeNotifier {
     } else {
       print('No image selected.');
     }
+  }
 
+  void _clear()
+  {
+    _imageSelected = false;
+    image = null;
+    nameController.text="";
+    descriptionController.text="";
+    selectedCity = null;
+    editedDocument = null;
+    _imageUrl="";
   }
 
   setSelectedItem(String value)
@@ -73,7 +105,7 @@ class ItemAddModel with ChangeNotifier {
         'added_date': DateTime.now(),
         'expiration_date': selectedDate,
         'uid': FirebaseAuth.instance.currentUser.uid,
-        'location':'Miasto',
+        'location':selectedCity.text,
         'vege':true,
       }).then((value) async {
         try {
@@ -96,10 +128,7 @@ class ItemAddModel with ChangeNotifier {
                   .set({"image_url": ""}, SetOptions(merge: true));
             }
           added = true;
-          _imageSelected = false;
-          image = null;
-          nameController.text="";
-          descriptionController.text="";
+          _clear();
         } on FirebaseException {
           print("Upload problem");
         }
@@ -109,5 +138,42 @@ class ItemAddModel with ChangeNotifier {
     }
     return added;
   }
-
+  Future<bool> editItem() async {
+    var edited=false;
+    try {
+      await editedDocument.update({
+        'name': nameController.text,
+        'description': descriptionController.text,
+        'added_date': DateTime.now(),
+        'expiration_date': selectedDate,
+        'uid': FirebaseAuth.instance.currentUser.uid,
+        'location':selectedCity.text,
+        'vege':true,
+        'image_url':_imageUrl
+      }).then((value) async {
+        try {
+          var ref = FirebaseStorage.instance.ref('dishes/' +
+              FirebaseAuth.instance.currentUser.uid +
+              "/" +
+              editedDocument.id +
+              "/" +
+              "1");
+          if(_imageSelected)
+          {
+            await ref.putData(await compressAndGetFile(image));
+            var downloadUrlRef = await ref.getDownloadURL();
+            await editedDocument
+                .set({"image_url": downloadUrlRef}, SetOptions(merge: true));
+          }
+          edited = true;
+          _clear();
+        } on FirebaseException {
+          print("Upload problem");
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+    return edited;
+  }
 }

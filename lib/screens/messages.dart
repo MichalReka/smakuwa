@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-
-
-import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:file_picker/file_picker.dart';
@@ -9,7 +6,6 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
-import 'package:uuid/uuid.dart';
 class ChatPage extends StatefulWidget {
   const ChatPage({Key key}) : super(key: key);
 
@@ -86,7 +82,7 @@ class _ChatPageState extends State<ChatPage> {
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         name: result.files.single.name,
-        id: const Uuid().v4(),
+        id: "123",
         size: result.files.single.size,
         uri: result.files.single.path ?? '',
       );
@@ -113,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         height: image.height.toDouble(),
-        id: const Uuid().v4(),
+        id: "123",
         name: name,
         size: bytes.length,
         uri: result.path,
@@ -150,7 +146,7 @@ class _ChatPageState extends State<ChatPage> {
     final textMessage = types.TextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
+      id: "123",
       text: message.text,
     );
 

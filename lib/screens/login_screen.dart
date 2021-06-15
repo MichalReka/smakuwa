@@ -19,11 +19,10 @@ class LoginScreen extends StatelessWidget {
                   Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(10),
-                      child: Text(
-                        'Logo',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 30),
-                      )),
+                      child: Image(
+                        image: AssetImage("assets/img/icon.png"),
+                      )
+                  ),
                   Container(
                     padding: EdgeInsets.all(10),
                     child: TextField(
