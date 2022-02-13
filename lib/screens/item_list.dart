@@ -16,7 +16,8 @@ const double _fabDimension = 56.0;
 //TODO: OPTYMALIZACJA READ/WRITE POPRZEZ LIMIT WYSWIETLANYCH DOKUMENTOW - SUBSET NIE CALOSC (NIE 1-5 tylko 1-3, 3-5) - czyli kazdy dokument to klasa
 class ItemList extends StatelessWidget {
   final showOwnedOnly;
-  ItemList({this.showOwnedOnly=false});
+  final filteredCity;
+  ItemList({this.showOwnedOnly = false, this.filteredCity = ""});
 
   Widget _displayImage(String uri) {
     print(uri);
@@ -95,35 +96,34 @@ class ItemList extends StatelessWidget {
     });
   }
 
+  Widget dynamicAppBar(){
+      return AppBar(
+//          actions: <Widget>[
+//            new IconButton(icon: model.icon,
+//              onPressed: () {
+//                  model.handleAppBarStateChange();
+//              },),
+//          ],
+          title: new Text("Ryneczek"),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: "Potrawy", icon: Icon(Icons.local_restaurant)),
+              Tab(text: "Produkty", icon: Icon(CustomIcons.carrot)),
+            ],
+          ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text("Ryneczek"),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: "Potrawy", icon: Icon(Icons.local_restaurant)),
-                Tab(text: "Produkty", icon: Icon(CustomIcons.carrot)),
-              ],
-            )),
+        appBar: dynamicAppBar(),
         body: TabBarView(children: [
           _displayItemList(context, "dishes"),
           _displayItemList(context, "products"),
         ]),
-        floatingActionButton: /*FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ItemAdd()),
-            );
-          },
-          tooltip: 'Dodaj potrawę',
-          child: Icon(Icons.add),
-        ),*/ // This trailing comma makes auto-formatting nicer for build methods.
+        floatingActionButton:
         OpenContainer(
           openBuilder: (BuildContext context, VoidCallback _) {
             return ItemAdd();

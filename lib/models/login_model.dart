@@ -7,7 +7,8 @@ class LoginModel with ChangeNotifier{
   bool launchError = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
+  bool noEmailFound = false;
+  bool wrongPassword = false;
   void checkIfLoggedIn(){
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
@@ -22,7 +23,13 @@ class LoginModel with ChangeNotifier{
     }
     //notifyListeners();
   }
+  void resetFlags()
+  {
+    wrongPassword = false;
+    noEmailFound = false;
+  }
   Future signIn() async{
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text,
@@ -34,9 +41,9 @@ class LoginModel with ChangeNotifier{
       passwordController.text="";
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        noEmailFound = true;
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        wrongPassword = true;
       }
     }
   }

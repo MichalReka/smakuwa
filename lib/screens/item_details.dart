@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:smakuwa/models/login_model.dart';
 import 'package:smakuwa/screens/item_add.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
+import 'chat_page.dart';
 import 'login_screen.dart';
 
 class FoodDetails extends StatelessWidget {
@@ -47,7 +52,20 @@ class FoodDetails extends StatelessWidget {
                   : NetworkImage(uri))),
     );
   }
-
+  void _handleSendMessage(BuildContext context) async
+  {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection("users").doc(document['uid']).get();
+    types.User user = types.User.fromJson({"createdAt":snapshot['createdAt'].millisecondsSinceEpoch,"firstName":snapshot['firstName'],"id":document['uid'],'imageUrl':snapshot['imageUrl']});
+    final room = await FirebaseChatCore.instance.createRoom(user);
+    Navigator.of(context).pop();
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          room: room,
+        ),
+      ),
+    );
+  }
   Widget _buttons(bool owner, BuildContext context) {
     if (owner) {
       return Row(
@@ -100,6 +118,10 @@ class FoodDetails extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => LoginScreen()),
             );
+          }
+        else
+          {
+            _handleSendMessage(context);
           }
       }));
     }
@@ -220,9 +242,9 @@ class FoodDetails extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _displayUserImage(snapshot.data['image']),
+                          _displayUserImage(snapshot.data['imageUrl']),
                           Text(
-                            snapshot.data['name'],
+                            snapshot.data['firstName'],
                             style: Theme.of(context).textTheme.headline5,
                           ),
                         ],

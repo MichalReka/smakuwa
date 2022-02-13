@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class AccountScreen extends StatelessWidget {
                 AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasData) {
                 model.currentUser = snapshot.data;
-                model.nameController.text = model.currentUser['name'];
+                model.nameController.text = model.currentUser['firstName'];
                 return Scaffold(
                   appBar: AppBar(
                     title: Text("Konto"),
@@ -46,15 +47,15 @@ class AccountScreen extends StatelessWidget {
                       margin: EdgeInsets.all(15),
                       child: ListView(
                         children: [
-                          _profilePhoto(snapshot.data['image']),
+                          _profilePhoto(snapshot.data['imageUrl']),
                           Container(
                               margin: EdgeInsets.only(bottom: 30),
                               child: Text(
-                                snapshot.data['name'],
+                                snapshot.data['firstName'],
                                 style: Theme.of(context).textTheme.headline4,
                                 textAlign: TextAlign.center,
                               )),
-                          Card(
+/*                          Card(
                             child: InkWell(
                               onTap: () {},
                               child: ListTile(
@@ -62,7 +63,7 @@ class AccountScreen extends StatelessWidget {
                                 title: Text("Twoje przepisy"),
                               ),
                             ),
-                          ),
+                          ),*/
                           Card(
                             child: InkWell(
                               onTap: () {

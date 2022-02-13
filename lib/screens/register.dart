@@ -67,7 +67,7 @@ class RegisterScreen extends StatelessWidget {
                           if (text == null || text.isEmpty) {
                             return 'Pole jest puste!';
                           } else if (model.passwordTooWeak == true) {
-                            model.passwordTooWeak = true;
+                            model.passwordTooWeak = false;
                             return 'Hasło jest zbyt słabe';
                           }
                           return null;

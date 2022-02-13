@@ -53,10 +53,10 @@ class Home extends StatelessWidget {
                 unselectedFontSize: 12,
                 showUnselectedLabels: true,
                 items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
+/*                  BottomNavigationBarItem(
                     icon: Icon(Icons.receipt),
                     label: 'Przepisy',
-                  ),
+                  ),*/
                   BottomNavigationBarItem(
                     icon: Icon(Icons.shopping_basket),
                     label: 'Ryneczek',

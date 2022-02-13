@@ -10,9 +10,9 @@ import 'login_screen.dart';
 //TODO: ZMNIEJSZYC ILOSC WCZYTYWANIA DANYCH O USERZE - WCZYTYWANE SA DWA RAZY
 class ProfileEdit extends StatelessWidget {
   Widget _profilePhoto(BuildContext context, ProfileModel model) {
-    ImageProvider image = (model.currentUser['image'] == "")
+    ImageProvider image = (model.currentUser['imageUrl'] == "")
         ? AssetImage("assets/img/placeholder.png")
-        : NetworkImage(model.currentUser['image']);
+        : NetworkImage(model.currentUser['imageUrl']);
     return Center(
       child: Material(
         child: Ink(
@@ -63,7 +63,7 @@ class ProfileEdit extends StatelessWidget {
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasData) {
                   model.currentUser=snapshot.data;
-                  model.nameController.text=model.currentUser['name'];
+                  model.nameController.text=model.currentUser['firstName'];
                   return Form(
                     key: model.formKey,
                     child: Container(

@@ -15,6 +15,8 @@ class ItemListModel extends ChangeNotifier {
     tabs[1]: new ScrollController()
   };
 
+  Icon icon = new Icon(Icons.search, color: Colors.white);
+  Widget title = new Text("Ryneczek");
   final _limitsIncrease = 2;
   Map<String, int> limits = {tabs[0]: 3, tabs[1]: 3};
   void _increaseLimit(String itemTab) {
@@ -33,21 +35,20 @@ class ItemListModel extends ChangeNotifier {
       }
     });
   }
-  Stream itemListStream(bool ownedOnly,String itemsGroup)
-  {
-    if(ownedOnly)
-      {
-        return FirebaseFirestore.instance
-            .collection(itemsGroup)
-            .limit(limits[itemsGroup]).where('uid',isEqualTo: FirebaseAuth.instance.currentUser.uid)
-            .snapshots();
-      }
-    else
-      {
-        return FirebaseFirestore.instance
-            .collection(itemsGroup)
-            .limit(limits[itemsGroup])
-            .snapshots();
-      }
+
+  Stream itemListStream(bool ownedOnly, String itemsGroup, [String city = ""]) {
+    var basicLimit = FirebaseFirestore.instance
+        .collection(itemsGroup)
+        .limit(limits[itemsGroup]);
+
+    if (ownedOnly) {
+      basicLimit.where('uid', isEqualTo: FirebaseAuth.instance.currentUser.uid);
+    }
+
+    if (city.isNotEmpty) {
+      basicLimit.where('location', isEqualTo: city);
+    }
+
+    return basicLimit.snapshots();
   }
 }

@@ -44,10 +44,10 @@ class ProfileModel extends ChangeNotifier{
       await storageRef.putData(await compressAndGetFile(image));
     var downloadUrlRef = await storageRef.getDownloadURL();
     await docRef
-        .set({"image": downloadUrlRef}, SetOptions(merge: true));
+        .set({"imageUrl": downloadUrlRef}, SetOptions(merge: true));
     }
     await docRef
-        .set({"name": nameController.text}, SetOptions(merge: true));
+        .set({"firstName": nameController.text}, SetOptions(merge: true));
     _imageSelected = false;
     image = null;
     nameController.clear();

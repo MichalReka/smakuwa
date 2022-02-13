@@ -26,6 +26,7 @@ class ItemAddModel with ChangeNotifier {
   bool itemAdded = false;
   bool _imageSelected = false;
   bool editMode = false;
+  bool _editing = false;
   List<City> citiesList;
   DocumentReference editedDocument;
   String _imageUrl;
@@ -42,9 +43,13 @@ class ItemAddModel with ChangeNotifier {
     cityController.text = selectedCity.text;
     _imageUrl = itemDetails['image_url'];
     editedDocument=itemDetails.reference;
-
+    _editing=true;
   }
-
+  void selectCity(City selected){
+      selectedCity=selected;
+      cityController.text=selected.text;
+      notifyListeners();
+  }
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -65,11 +70,12 @@ class ItemAddModel with ChangeNotifier {
     selectedCity = null;
     editedDocument = null;
     _imageUrl="";
+    cityController.text="";
   }
 
   setSelectedItem(String value)
   {
-    selectedItem=value;
+    selectedItem = value;
     items = FirebaseFirestore.instance.collection(value);
     notifyListeners();
   }
@@ -78,12 +84,13 @@ class ItemAddModel with ChangeNotifier {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: selectedDate, // Refer step 1
-      firstDate: DateTime.now(),
+      firstDate: (DateTime.now().millisecondsSinceEpoch>selectedDate.millisecondsSinceEpoch)?selectedDate:DateTime.now(),
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       selectedDate = picked;
     }
+    print(selectedDate);
     notifyListeners();
     return null;
   }
@@ -107,6 +114,7 @@ class ItemAddModel with ChangeNotifier {
         'uid': FirebaseAuth.instance.currentUser.uid,
         'location':selectedCity.text,
         'vege':true,
+        'image_url':""
       }).then((value) async {
         try {
           var ref = FirebaseStorage.instance.ref('dishes/' +
@@ -120,12 +128,12 @@ class ItemAddModel with ChangeNotifier {
               await ref.putData(await compressAndGetFile(image));
               var downloadUrlRef = await ref.getDownloadURL();
               await value
-                  .set({"image_url": downloadUrlRef}, SetOptions(merge: true));
+                  .update({"image_url": downloadUrlRef});
             }
           else
             {
               await value
-                  .set({"image_url": ""}, SetOptions(merge: true));
+                  .update({"image_url": ""});
             }
           added = true;
           _clear();

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class RegisterModel extends ChangeNotifier{
   TextEditingController emailController = TextEditingController();
@@ -21,10 +23,20 @@ class RegisterModel extends ChangeNotifier{
           password: passwordController.text
       );
 
-      await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).set({
-        'name':nameController.text,
-        'image':"",
-
+//      await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).set({
+//        'name':nameController.text,
+//        'image':"",
+//    });
+      await FirebaseChatCore.instance.createUserInFirestore(
+        types.User(
+          firstName: nameController.text,
+          id: userCredential.user.uid, // UID from Firebase Authentication
+          imageUrl: "",
+          lastName: ""
+        ),
+      );
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).update({
+        'uid':userCredential.user.uid
     });
       emailController.clear();
       nameController.clear();

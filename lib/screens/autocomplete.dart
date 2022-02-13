@@ -6,22 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:smakuwa/models/json_models.dart';
 
-class AutocompleteExampleApp extends StatelessWidget {
-  const AutocompleteExampleApp({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Autocomplete Basic User'),
-        ),
-        body: const Center(
-          child: AutocompleteBasicUserExample(),
-        ),
-      );
-  }
-}
-
 class AutocompleteBasicUserExample extends StatelessWidget {
   const AutocompleteBasicUserExample({Key key}) : super(key: key);
   static String _displayStringForOption(City city) => city.text;

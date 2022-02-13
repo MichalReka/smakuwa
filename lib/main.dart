@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smakuwa/models/password_reset_model.dart';
 import 'package:smakuwa/models/profile_model.dart';
 import 'package:smakuwa/models/item_add_model.dart';
 import 'package:smakuwa/models/item_list_model.dart';
@@ -26,6 +27,8 @@ void main(){
       ChangeNotifierProvider(create: (context) => HomeModel()),
       ChangeNotifierProvider(create: (context) => ItemListModel()),
       ChangeNotifierProvider(create: (context) => RegisterModel()),
+      ChangeNotifierProvider(create: (context) => PasswordResetModel()),
+
     ],
     child: Smakuwa(),
   ),);
